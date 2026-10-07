@@ -4,12 +4,12 @@ import { cancel, confirm, intro, isCancel, log, multiselect, note, outro } from 
 import { CLIENTS, type ClientId, MCP_URL, NAME, install } from './clients.ts'
 import { describeServer } from './config.ts'
 
-// npx sepiace の本体。手元のエージェントのクライアントを見つけ、選んだものに sepiace をつなぎ、ログインと記憶の移行を案内する。
+// npm create sepiace の本体。手元のエージェントのクライアントを見つけ、選んだものに sepiace をつなぎ、ログインと記憶の移行を案内する。
 
 declare const __VERSION__: string | undefined
 const VERSION = typeof __VERSION__ === 'string' ? __VERSION__ : 'dev'
 
-const HELP = `Usage: npx sepiace [options]
+const HELP = `Usage: npm create sepiace [-- options]
 
 Connects sepiace, long-term memory for coding agents, to the clients on this machine.
 
@@ -82,7 +82,7 @@ const main = async () => {
   intro(`sepiace ${VERSION}`)
   const chosen = await chooseClients()
   if (chosen.length === 0) {
-    outro('No clients were found. Run `npx sepiace --client <id>` to choose one.')
+    outro('No clients were found. Run `npm create sepiace -- --client <id>` to choose one.')
     return
   }
 

@@ -1,10 +1,10 @@
-# sepiace
+# create-sepiace
 
 Connect [sepiace](https://www.sepiace.io), long-term memory for coding agents, to the clients on your machine.<br>
 <sub>コーディングエージェントのための長期記憶 sepiace を、手元のクライアントにつなぎます。</sub>
 
 ```sh
-npx sepiace
+npm create sepiace
 ```
 
 It finds the clients you have, asks which ones should use sepiace, and connects them. Then it shows how to sign in, and how to move the memories your agent already has into sepiace.
@@ -30,6 +30,8 @@ It keeps your comments and other servers, writes each file in one step so a fail
 <summary>Options</summary>
 <br>
 
+Pass options after `--`, for example `npm create sepiace -- --client cursor,opencode`.
+
 | Option | What it does |
 | --- | --- |
 | `--client <ids>` | Comma-separated: `claude-code`, `codex`, `cursor`, `vscode`, `opencode`, `claude-desktop` |
@@ -43,7 +45,7 @@ It keeps your comments and other servers, writes each file in one step so a fail
 <summary>日本語</summary>
 <br>
 
-`npx sepiace` を流すと、手元にあるクライアントを見つけ、どれに sepiace をつなぐかを尋ねてから、つなぎます。そのあと、ログインの手順と、エージェントがすでに覚えている記憶を sepiace に移す方法を案内します。
+`npm create sepiace` を流すと、手元にあるクライアントを見つけ、どれに sepiace をつなぐかを尋ねてから、つなぎます。そのあと、ログインの手順と、エージェントがすでに覚えている記憶を sepiace に移す方法を案内します。
 
 - Claude Code と Codex には、[osaxyz/sepiace](https://github.com/osaxyz/sepiace) のプラグインを入れます。
 - Cursor、VS Code、OpenCode には、MCP の設定ファイルに sepiace を書き足し、sepiace のスキルを置きます。

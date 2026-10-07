@@ -10,7 +10,7 @@ Read the user's local memory files, show what you found, and after the user agre
 
 ## 1. Check the connection
 
-Make sure the `memory` tool from the sepiace MCP server is available. If it is not, stop and tell the user to connect sepiace first: run `npx sepiace`, then sign in (Claude Code: `/mcp`; Codex: `codex mcp login sepiace`; OpenCode: `opencode mcp auth sepiace`; Cursor and VS Code: sign in to sepiace from the MCP settings).
+Make sure the `memory` tool from the sepiace MCP server is available. If it is not, stop and tell the user to connect sepiace first: run `npm create sepiace`, then sign in (Claude Code: `/mcp`; Codex: `codex mcp login sepiace`; OpenCode: `opencode mcp auth sepiace`; Cursor and VS Code: sign in to sepiace from the MCP settings).
 
 ## 2. Find the sources
 

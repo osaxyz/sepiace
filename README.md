@@ -26,10 +26,10 @@ Long-term memory for coding agents. Your agent passes one natural-language sente
 ### Quick start
 
 ```sh
-npx sepiace
+npm create sepiace
 ```
 
-It finds Claude Code, Codex, Cursor, VS Code, and OpenCode on your machine, connects the ones you choose, and shows how to sign in. This repository holds the sepiace plugin for Claude Code and Codex, and the `npx sepiace` CLI in [`cli/`](cli).
+It finds Claude Code, Codex, Cursor, VS Code, and OpenCode on your machine, connects the ones you choose, and shows how to sign in. This repository holds the sepiace plugin for Claude Code and Codex, and the `npm create sepiace` CLI in [`cli/`](cli).
 
 <details>
 <summary>Claude Code by hand</summary>
@@ -169,10 +169,10 @@ This repository is a mirror. See [CONTRIBUTING.md](CONTRIBUTING.md). To report a
 ### クイックスタート
 
 ```sh
-npx sepiace
+npm create sepiace
 ```
 
-手元の Claude Code、Codex、Cursor、VS Code、OpenCode を見つけ、選んだものにつなぎ、ログインの手順を案内します。このリポジトリには、Claude Code と Codex で使う sepiace のプラグインと、[`cli/`](cli) に `npx sepiace` の CLI があります。
+手元の Claude Code、Codex、Cursor、VS Code、OpenCode を見つけ、選んだものにつなぎ、ログインの手順を案内します。このリポジトリには、Claude Code と Codex で使う sepiace のプラグインと、[`cli/`](cli) に `npm create sepiace` の CLI があります。
 
 <details>
 <summary>Claude Code に手で入れる</summary>

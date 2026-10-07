@@ -1,5 +1,5 @@
 {
-  "name": "sepiace",
+  "name": "create-sepiace",
   "version": "0.1.0",
   "description": "Connect sepiace, long-term memory for coding agents, to Claude Code, Codex, Cursor, VS Code, and OpenCode.",
   "keywords": [
@@ -22,7 +22,7 @@
   "author": "Arata Ouchi",
   "type": "module",
   "bin": {
-    "sepiace": "./dist/index.js"
+    "create-sepiace": "dist/index.js"
   },
   "files": [
     "dist",

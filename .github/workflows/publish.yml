@@ -1,4 +1,4 @@
-# npx sepiace の CLI（cli/）を npm に公開する。osaxyz/nyquist の publish.yml と同じ作り。
+# npm create sepiace の CLI（cli/、npm の create-sepiace）を npm に公開する。osaxyz/nyquist の publish.yml と同じ作り。
 # npm の Trusted Publishing（OIDC）で認証するので、npm のトークンを GitHub に置かない。
 # リポジトリが公開されているので、どのコミットからビルドしたかを示す provenance も付ける。
 # 依存のインストールとビルドは、公開の証明書を取り出せないジョブで行い、tarball だけを公開のジョブに渡す。
