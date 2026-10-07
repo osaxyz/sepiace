@@ -1,0 +1,12 @@
+{
+  "name": "sepiace",
+  "interface": { "displayName": "sepiace" },
+  "plugins": [
+    {
+      "name": "sepiace",
+      "source": { "source": "url", "url": "https://github.com/osaxyz/sepiace.git" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Productivity"
+    }
+  ]
+}
