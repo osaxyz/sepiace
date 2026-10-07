@@ -15,8 +15,7 @@ Connect [sepiace](https://www.sepiace.io), long-term memory for coding agents, t
 
 ## English
 
-> [!TIP]
-> Run it again at any time. Clients that are already connected are left as they are.
+> **Tip:** Run it again at any time. Clients that are already connected are left as they are.
 
 ### Quick start
 
@@ -80,8 +79,7 @@ Pass options after `--`, for example `npm create sepiace -- --client cursor,open
 
 ## 日本語
 
-> [!TIP]
-> 何度流しても構いません。すでにつながっているクライアントはそのままにします。
+> **ヒント** 何度流しても構いません。すでにつながっているクライアントはそのままにします。
 
 ### クイックスタート
 
