@@ -1,7 +1,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/osaxyz/sepiace/main/brand/logo-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/osaxyz/sepiace/main/brand/logo.svg">
-  <img src="brand/logo.svg" width="240" alt="sepiace">
+  <img src="brand/logo.svg" width="96" alt="sepiace">
 </picture>
 
 # sepiace
@@ -29,24 +29,26 @@ Long-term memory for coding agents. Your agent passes one natural-language sente
 npm create sepiace
 ```
 
-It finds Claude Code, Codex, Cursor, VS Code, and OpenCode on your machine, connects the ones you choose, and shows how to sign in. This repository holds the sepiace plugin for Claude Code and Codex, and the `npm create sepiace` CLI in [`cli/`](cli).
+It finds Claude Code, Codex, Cursor, VS Code, and OpenCode on your machine, connects the ones you choose, and walks you through signing in. Then start a new session and ask your agent:
+
+- "Remember that I prefer pnpm over npm."
+- "What did we decide about the release schedule?"
+- "Forget my old home address."
+
+To bring over what your agent already remembers, run `/sepiace:migrate` in Claude Code, or ask other clients to use the `sepiace-migrate` skill. It shows you what it found and sends nothing until you agree.
 
 <details>
-<summary>Claude Code by hand</summary>
+<summary>Install by hand</summary>
 <br>
+
+Claude Code:
 
 ```
 /plugin marketplace add osaxyz/sepiace
 /plugin install sepiace@sepiace
 ```
 
-Run `/mcp`, choose sepiace, and sign in with the code or link sent to your email.
-
-</details>
-
-<details>
-<summary>Codex by hand</summary>
-<br>
+Codex:
 
 ```sh
 codex plugin marketplace add osaxyz/sepiace
@@ -54,57 +56,11 @@ codex plugin add sepiace@sepiace
 codex mcp login sepiace
 ```
 
-The login opens your browser. Sign in with the code or link sent to your email.
+Other MCP clients: add `https://hi.sepiace.io/api/v1/mcp` as a remote MCP server (Streamable HTTP). The client signs in through OAuth in the browser.
 
 </details>
 
-<details>
-<summary>Other MCP clients by hand</summary>
-<br>
-
-Add `https://hi.sepiace.io/api/v1/mcp` as a remote MCP server (Streamable HTTP). Your client signs in through OAuth in the browser.
-
-</details>
-
-Try asking:
-
-- "Remember that I prefer pnpm over npm."
-- "What did we decide about the release schedule?"
-- "Forget my old home address."
-
-### Move your existing memories
-
-<details>
-<summary>Bring over what Claude Code and Codex already remember</summary>
-<br>
-
-Ask your agent to run the `migrate` skill (`/sepiace:migrate` in Claude Code). It reads the files below, shows you what it found, and sends the facts to sepiace only after you agree. It never changes the local files.
-
-| Source | Files |
-| --- | --- |
-| Claude Code auto memory | `~/.claude/projects/*/memory/*.md` |
-| Claude Code user instructions | `~/.claude/CLAUDE.md` |
-| Codex memories | `~/.codex/memories/` |
-| Codex user instructions | `~/.codex/AGENTS.md` |
-
-</details>
-
-### What the plugin does
-
-<details>
-<summary>Components</summary>
-<br>
-
-| Component | What it does |
-| --- | --- |
-| MCP server | Connects `https://hi.sepiace.io/api/v1/mcp`. It has one tool, `memory`, which takes one sentence |
-| `sepiace` skill | Tells the agent to recall before acting, to save durable facts as plain sentences about you, and never to send secrets |
-| Session-start note | A short reminder, about 130 tokens, added when a session starts, is cleared, or is compacted |
-| `migrate` skill | Moves local memories into sepiace. It runs only when you ask for it |
-
-</details>
-
-### How sepiace remembers
+### Technology
 
 <details>
 <summary>One sentence in, memory text out</summary>
@@ -131,6 +87,14 @@ Each memory's score follows the FSRS forgetting curve and is computed when it is
 </details>
 
 <details>
+<summary>Your memories stay yours, and you can see every request</summary>
+<br>
+
+Memories are kept separately for each account, and every database query and vector search is scoped to the signed-in user. The console at [hi.sepiace.io](https://hi.sepiace.io) lists every request with the memories it changed, and a client you disconnect there stops working right away.
+
+</details>
+
+<details>
 <summary>Measured with KiokuBench</summary>
 <br>
 
@@ -138,21 +102,51 @@ KiokuBench checks what a memory system actually stored: whether it kept the fact
 
 </details>
 
-### Your data
+### Specification
 
 <details>
-<summary>What is kept and how to see it</summary>
+<summary>Plugin components</summary>
 <br>
 
-- Memories are kept separately for each account. Every database query and vector search is scoped to the signed-in user.
-- The console at [hi.sepiace.io](https://hi.sepiace.io) lists every request, with the memories it changed and the response.
-- You can disconnect any client in the console. A disconnected client stops working right away.
+| Component | What it does |
+| --- | --- |
+| MCP server | Connects `https://hi.sepiace.io/api/v1/mcp`. It has one tool, `memory`, which takes one sentence |
+| `memory` skill | Tells the agent to recall before acting, to save durable facts as plain sentences about you, and never to send secrets |
+| Session-start note | A short reminder, about 130 tokens, added when a session starts, is cleared, or is compacted |
+| `migrate` skill | Moves local memories into sepiace. It runs only when you ask for it |
 
 </details>
 
-### Contributing
+<details>
+<summary>What the migrate skill reads</summary>
+<br>
 
-This repository is a mirror. See [CONTRIBUTING.md](CONTRIBUTING.md). To report a vulnerability, see [SECURITY.md](SECURITY.md). The plugin is licensed under the [Apache License 2.0](LICENSE).
+| Source | Files |
+| --- | --- |
+| Claude Code auto memory | `~/.claude/projects/*/memory/*.md` |
+| Claude Code user instructions | `~/.claude/CLAUDE.md` |
+| Codex memories | `~/.codex/memories/` |
+| Codex user instructions | `~/.codex/AGENTS.md` |
+
+It never changes the local files.
+
+</details>
+
+<details>
+<summary>What npm create sepiace changes</summary>
+<br>
+
+| Client | What it does |
+| --- | --- |
+| Claude Code, Codex | Installs the plugin from this repository |
+| Cursor | Adds sepiace to `~/.cursor/mcp.json` and the skills to `~/.cursor/skills` |
+| VS Code | Adds sepiace to the user `mcp.json` and the skills to `~/.copilot/skills` |
+| OpenCode | Adds sepiace to `~/.config/opencode/opencode.json` and the skills to `~/.config/opencode/skills` |
+| Claude Desktop and claude.ai | Shows how to add sepiace as a custom connector |
+
+The CLI lives in [`cli/`](cli) and is published to npm as `create-sepiace`.
+
+</details>
 
 <a id="ja"></a>
 
@@ -172,24 +166,26 @@ This repository is a mirror. See [CONTRIBUTING.md](CONTRIBUTING.md). To report a
 npm create sepiace
 ```
 
-手元の Claude Code、Codex、Cursor、VS Code、OpenCode を見つけ、選んだものにつなぎ、ログインの手順を案内します。このリポジトリには、Claude Code と Codex で使う sepiace のプラグインと、[`cli/`](cli) に `npm create sepiace` の CLI があります。
+手元の Claude Code、Codex、Cursor、VS Code、OpenCode を見つけ、選んだものにつなぎ、ログインまで案内します。そのあと新しいセッションで、エージェントに次のように頼んでみてください。
+
+- 「npm より pnpm を使いたい、と覚えて」
+- 「リリースの日程はどう決めたっけ？」
+- 「前の住所は忘れて」
+
+エージェントがすでに覚えていることを移すには、Claude Code では `/sepiace:migrate` を、ほかのクライアントでは `sepiace-migrate` スキルを使うよう頼んでください。見つけたものを見せ、あなたが了承するまで何も送りません。
 
 <details>
-<summary>Claude Code に手で入れる</summary>
+<summary>手で入れる</summary>
 <br>
+
+Claude Code
 
 ```
 /plugin marketplace add osaxyz/sepiace
 /plugin install sepiace@sepiace
 ```
 
-`/mcp` で sepiace を選び、メールに届くコードかリンクでログインします。
-
-</details>
-
-<details>
-<summary>Codex に手で入れる</summary>
-<br>
+Codex
 
 ```sh
 codex plugin marketplace add osaxyz/sepiace
@@ -197,57 +193,11 @@ codex plugin add sepiace@sepiace
 codex mcp login sepiace
 ```
 
-ログインでブラウザが開きます。メールに届くコードかリンクでログインします。
+ほかの MCP クライアントでは、`https://hi.sepiace.io/api/v1/mcp` をリモートの MCP サーバー（Streamable HTTP）として足します。ログインはブラウザの OAuth で行います。
 
 </details>
 
-<details>
-<summary>ほかの MCP クライアントに手で入れる</summary>
-<br>
-
-`https://hi.sepiace.io/api/v1/mcp` をリモートの MCP サーバー（Streamable HTTP）として足します。ログインはブラウザの OAuth で行います。
-
-</details>
-
-次のように頼んでみてください。
-
-- 「npm より pnpm を使いたい、と覚えて」
-- 「リリースの日程はどう決めたっけ？」
-- 「前の住所は忘れて」
-
-### 今ある記憶を移す
-
-<details>
-<summary>Claude Code と Codex が覚えていることを移す</summary>
-<br>
-
-エージェントに `migrate` スキルを使うよう頼んでください（Claude Code では `/sepiace:migrate`）。次のファイルを読み、見つけたものを見せ、あなたが了承してから sepiace に送ります。手元のファイルは変えません。
-
-| 移す元 | ファイル |
-| --- | --- |
-| Claude Code の auto memory | `~/.claude/projects/*/memory/*.md` |
-| Claude Code のユーザーの指示 | `~/.claude/CLAUDE.md` |
-| Codex の記憶 | `~/.codex/memories/` |
-| Codex のユーザーの指示 | `~/.codex/AGENTS.md` |
-
-</details>
-
-### プラグインの中身
-
-<details>
-<summary>入っているもの</summary>
-<br>
-
-| 部品 | 役割 |
-| --- | --- |
-| MCP サーバー | `https://hi.sepiace.io/api/v1/mcp` をつなぎます。ツールは、文を1つ受け取る `memory` だけです |
-| `sepiace` スキル | 動く前に思い出すこと、長く使う事実をあなたについての文で覚えること、秘密を送らないことを伝えます |
-| セッションの始めの案内 | セッションの開始、`/clear`、圧縮のあとに、約130トークンの短い案内を足します |
-| `migrate` スキル | 手元の記憶を sepiace に移します。あなたが頼んだときだけ動きます |
-
-</details>
-
-### sepiace の覚え方
+### テクノロジー
 
 <details>
 <summary>文を1つ渡すと、記憶の本文が返ります</summary>
@@ -274,6 +224,14 @@ codex mcp login sepiace
 </details>
 
 <details>
+<summary>記憶はあなただけのもので、すべての依頼を確かめられます</summary>
+<br>
+
+記憶はアカウントごとに分けて保存し、データベースの問い合わせとベクトル検索は、どれもログインした人の分だけを対象にします。[hi.sepiace.io](https://hi.sepiace.io) のコンソールで、すべての依頼とそれで変わった記憶を確かめられ、そこで取り消したクライアントは、すぐに使えなくなります。
+
+</details>
+
+<details>
 <summary>KiokuBench で測っています</summary>
 <br>
 
@@ -281,18 +239,48 @@ KiokuBench は、記憶のシステムが実際に何を残したかを確かめ
 
 </details>
 
-### データの扱い
+### 仕様
 
 <details>
-<summary>何を残し、どこで確かめられるか</summary>
+<summary>プラグインの中身</summary>
 <br>
 
-- 記憶はアカウントごとに分けて保存します。データベースの問い合わせとベクトル検索は、どれもログインした人の分だけを対象にします。
-- [hi.sepiace.io](https://hi.sepiace.io) のコンソールで、すべての依頼と、それで変わった記憶、応答を確かめられます。
-- つないだクライアントは、コンソールで取り消せます。取り消したクライアントは、すぐに使えなくなります。
+| 部品 | 役割 |
+| --- | --- |
+| MCP サーバー | `https://hi.sepiace.io/api/v1/mcp` をつなぎます。ツールは、文を1つ受け取る `memory` だけです |
+| `memory` スキル | 動く前に思い出すこと、長く使う事実をあなたについての文で覚えること、秘密を送らないことを伝えます |
+| セッションの始めの案内 | セッションの開始、`/clear`、圧縮のあとに、約130トークンの短い案内を足します |
+| `migrate` スキル | 手元の記憶を sepiace に移します。あなたが頼んだときだけ動きます |
 
 </details>
 
-### 開発に参加する
+<details>
+<summary>migrate スキルが読むもの</summary>
+<br>
 
-このリポジトリはミラーです。[CONTRIBUTING.md](CONTRIBUTING.md) を見てください。脆弱性の報告は [SECURITY.md](SECURITY.md) を見てください。プラグインのライセンスは [Apache License 2.0](LICENSE) です。
+| 移す元 | ファイル |
+| --- | --- |
+| Claude Code の auto memory | `~/.claude/projects/*/memory/*.md` |
+| Claude Code のユーザーの指示 | `~/.claude/CLAUDE.md` |
+| Codex の記憶 | `~/.codex/memories/` |
+| Codex のユーザーの指示 | `~/.codex/AGENTS.md` |
+
+手元のファイルは変えません。
+
+</details>
+
+<details>
+<summary>npm create sepiace が変えるもの</summary>
+<br>
+
+| クライアント | すること |
+| --- | --- |
+| Claude Code、Codex | このリポジトリのプラグインを入れます |
+| Cursor | `~/.cursor/mcp.json` に sepiace を足し、`~/.cursor/skills` にスキルを置きます |
+| VS Code | ユーザーの `mcp.json` に sepiace を足し、`~/.copilot/skills` にスキルを置きます |
+| OpenCode | `~/.config/opencode/opencode.json` に sepiace を足し、`~/.config/opencode/skills` にスキルを置きます |
+| Claude Desktop と claude.ai | カスタムコネクタとして足す手順を表示します |
+
+CLI は [`cli/`](cli) にあり、npm に `create-sepiace` として公開しています。
+
+</details>

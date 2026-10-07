@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { parse } from 'jsonc-parser'
@@ -80,14 +80,30 @@ describe('設定ファイルへの書き足し', () => {
 })
 
 describe('スキル', () => {
-  it('sepiace と sepiace-migrate を置き、同じ中身なら書き直さない', async () => {
+  it('sepiace-memory と sepiace-migrate を置き、同じ中身なら書き直さない', async () => {
     const dir = join(home, 'skills')
     expect(await installSkills(dir)).toBe(2)
     expect(await installSkills(dir)).toBe(0)
     const migrate = readFileSync(join(dir, 'sepiace-migrate', 'SKILL.md'), 'utf8')
     expect(migrate).toMatch(/^name: sepiace-migrate$/m)
-    expect(readFileSync(join(dir, 'sepiace', 'SKILL.md'), 'utf8')).toContain('`sepiace-migrate` skill')
-    expect(SKILLS.map((s) => s.name)).toEqual(['sepiace', 'sepiace-migrate'])
+    const memory = readFileSync(join(dir, 'sepiace-memory', 'SKILL.md'), 'utf8')
+    expect(memory).toMatch(/^name: sepiace-memory$/m)
+    expect(memory).toContain('`sepiace-migrate` skill')
+    expect(SKILLS.map((s) => s.name)).toEqual(['sepiace-memory', 'sepiace-migrate'])
+  })
+
+  it('前の版が置いた sepiace のスキルは片付けるが、ほかの人が置いたものには触らない', async () => {
+    const dir = join(home, 'skills')
+    mkdirSync(join(dir, 'sepiace'), { recursive: true })
+    writeFileSync(join(dir, 'sepiace', 'SKILL.md'), "---\nname: sepiace\ndescription: Use sepiace, the user's long-term memory, through its MCP tool.\n---\n")
+    await installSkills(dir)
+    expect(existsSync(join(dir, 'sepiace'))).toBe(false)
+
+    const other = join(home, 'other')
+    mkdirSync(join(other, 'sepiace'), { recursive: true })
+    writeFileSync(join(other, 'sepiace', 'SKILL.md'), '---\nname: sepiace\ndescription: My own notes.\n---\n')
+    await installSkills(other)
+    expect(existsSync(join(other, 'sepiace', 'SKILL.md'))).toBe(true)
   })
 })
 
@@ -96,7 +112,7 @@ describe('クライアント', () => {
     const result = await install('cursor', never)
     expect(result.kind).toBe('added')
     expect(read(join(home, '.cursor', 'mcp.json'))).toEqual({ mcpServers: { sepiace: { url: MCP_URL } } })
-    expect(readFileSync(join(home, '.cursor', 'skills', 'sepiace', 'SKILL.md'), 'utf8')).toMatch(/^name: sepiace$/m)
+    expect(readFileSync(join(home, '.cursor', 'skills', 'sepiace-memory', 'SKILL.md'), 'utf8')).toMatch(/^name: sepiace-memory$/m)
     expect((await install('cursor', never)).kind).toBe('exists')
   })
 
@@ -118,7 +134,7 @@ describe('クライアント', () => {
     const dir = join(home, '.config', 'opencode')
     expect((await install('opencode', never)).kind).toBe('added')
     expect(read(join(dir, 'opencode.json'))).toEqual({ $schema: 'https://opencode.ai/config.json', mcp: { sepiace: { type: 'remote', url: MCP_URL, enabled: true } } })
-    expect(readFileSync(join(dir, 'skills', 'sepiace', 'SKILL.md'), 'utf8')).toMatch(/^name: sepiace$/m)
+    expect(readFileSync(join(dir, 'skills', 'sepiace-memory', 'SKILL.md'), 'utf8')).toMatch(/^name: sepiace-memory$/m)
 
     writeFileSync(join(dir, 'opencode.jsonc'), '{\n  // jsonc\n  "theme": "x"\n}\n')
     expect((await install('opencode', never)).kind).toBe('added')

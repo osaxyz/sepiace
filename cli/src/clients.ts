@@ -1,4 +1,4 @@
-import { spawnSync } from 'node:child_process'
+import { spawn } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
@@ -25,12 +25,18 @@ const home = () => homedir()
 // XDG_CONFIG_HOME があれば、OpenCode と Linux の VS Code はその下を使う。
 const configHome = () => process.env.XDG_CONFIG_HOME ?? join(home(), '.config')
 
-const has = (command: string) => spawnSync(command, ['--version'], { stdio: 'ignore', shell: process.platform === 'win32' }).status === 0
+// 外のコマンドは非同期で呼ぶ。同期で呼ぶと、そのあいだ画面のスピナーが止まって見える。
+export const run = (command: string, args: string[]) =>
+  new Promise<{ ok: boolean; output: string }>((resolve) => {
+    let output = ''
+    const child = spawn(command, args, { shell: process.platform === 'win32' })
+    child.stdout?.on('data', (chunk) => (output += chunk))
+    child.stderr?.on('data', (chunk) => (output += chunk))
+    child.on('error', () => resolve({ ok: false, output: output.trim() }))
+    child.on('close', (code) => resolve({ ok: code === 0, output: output.trim() }))
+  })
 
-const run = (command: string, args: string[]) => {
-  const result = spawnSync(command, args, { encoding: 'utf8', shell: process.platform === 'win32' })
-  return { ok: result.status === 0, output: `${result.stdout ?? ''}${result.stderr ?? ''}`.trim() }
-}
+const has = async (command: string) => (await run(command, ['--version'])).ok
 
 const fail = (what: string, output: string): never => {
   throw new Error(`${what} failed: ${output}`)
@@ -50,59 +56,66 @@ const openCodeConfig = () => {
   return { dir, file: existsSync(jsonc) ? jsonc : join(dir, 'opencode.json') }
 }
 
-const changeMessage = (kind: 'added' | 'exists' | 'replaced', where: string) =>
-  kind === 'added' ? `Added sepiace to ${where}` : kind === 'replaced' ? `Replaced the old sepiace entry in ${where}` : `${where} already has sepiace`
+// 画面に出すパスは、ホームディレクトリを ~ にして短くする。
+export const tilde = (path: string) => (path.startsWith(home()) ? `~${path.slice(home().length)}` : path)
 
-const claudeCode = (): Result => {
+const changeMessage = (kind: 'added' | 'exists' | 'replaced', where: string) =>
+  kind === 'added'
+    ? `Added sepiace to ${tilde(where)}`
+    : kind === 'replaced'
+      ? `Replaced the old sepiace entry in ${tilde(where)}`
+      : `${tilde(where)} already has sepiace`
+
+const claudeCode = async (): Promise<Result> => {
   const commands = [`claude plugin marketplace add ${MARKETPLACE}`, `claude plugin install ${PLUGIN}`]
-  if (!has('claude')) return { kind: 'manual', message: "Claude Code's CLI was not found. Run these to add sepiace:", snippet: commands.join('\n') }
-  const listed = run('claude', ['plugin', 'list', '--json'])
+  if (!(await has('claude'))) return { kind: 'manual', message: "Claude Code's CLI was not found. Run these to add sepiace:", snippet: commands.join('\n') }
+  const listed = await run('claude', ['plugin', 'list', '--json'])
   const installed = listed.ok && (JSON.parse(listed.output || '[]') as { id: string }[]).some((plugin) => plugin.id === PLUGIN)
   if (!installed) {
-    const marketplaces = run('claude', ['plugin', 'marketplace', 'list', '--json'])
+    const marketplaces = await run('claude', ['plugin', 'marketplace', 'list', '--json'])
     const known = marketplaces.ok && (JSON.parse(marketplaces.output || '[]') as { name: string }[]).some((m) => m.name === NAME)
     if (!known) {
-      const added = run('claude', ['plugin', 'marketplace', 'add', MARKETPLACE])
+      const added = await run('claude', ['plugin', 'marketplace', 'add', MARKETPLACE])
       if (!added.ok) fail('claude plugin marketplace add', added.output)
     }
-    const done = run('claude', ['plugin', 'install', PLUGIN])
+    const done = await run('claude', ['plugin', 'install', PLUGIN])
     if (!done.ok) fail('claude plugin install', done.output)
   }
   // プラグインとは別に、手で足した sepiace の MCP サーバーがあると、同じツールが2つ並ぶ。
-  const standalone = run('claude', ['mcp', 'get', NAME]).ok
+  const standalone = (await run('claude', ['mcp', 'get', NAME])).ok
   return {
     kind: installed ? 'exists' : 'added',
     message: installed ? 'Claude Code already has the sepiace plugin' : 'Installed the sepiace plugin in Claude Code',
-    login: 'In Claude Code, run /mcp, choose sepiace, and sign in.',
+    login: 'Open Claude Code, run /mcp, choose plugin:sepiace:sepiace, and sign in.',
     ...(standalone ? { warning: 'Claude Code also has an MCP server called sepiace that was added by hand. Remove it with `claude mcp remove sepiace` so the tools are not listed twice.' } : {}),
   }
 }
 
-const codex = (): Result => {
+const codex = async (): Promise<Result> => {
   const commands = [`codex plugin marketplace add ${MARKETPLACE}`, `codex plugin add ${PLUGIN}`, `codex mcp login ${NAME}`]
-  if (!has('codex')) return { kind: 'manual', message: "Codex's CLI was not found. Run these to add sepiace:", snippet: commands.join('\n') }
-  const installed = /^sepiace@sepiace\s+installed/m.test(run('codex', ['plugin', 'list']).output)
+  if (!(await has('codex'))) return { kind: 'manual', message: "Codex's CLI was not found. Run these to add sepiace:", snippet: commands.join('\n') }
+  const installed = /^sepiace@sepiace\s+installed/m.test((await run('codex', ['plugin', 'list'])).output)
   if (!installed) {
-    if (!/^sepiace\s/m.test(run('codex', ['plugin', 'marketplace', 'list']).output)) {
-      const added = run('codex', ['plugin', 'marketplace', 'add', MARKETPLACE])
+    if (!/^sepiace\s/m.test((await run('codex', ['plugin', 'marketplace', 'list'])).output)) {
+      const added = await run('codex', ['plugin', 'marketplace', 'add', MARKETPLACE])
       if (!added.ok) fail('codex plugin marketplace add', added.output)
     }
-    const done = run('codex', ['plugin', 'add', PLUGIN])
+    const done = await run('codex', ['plugin', 'add', PLUGIN])
     if (!done.ok) fail('codex plugin add', done.output)
   }
   return {
     kind: installed ? 'exists' : 'added',
     message: installed ? 'Codex already has the sepiace plugin' : 'Installed the sepiace plugin in Codex',
-    login: `Run \`codex mcp login ${NAME}\` and sign in in the browser.`,
+    login: 'Sign in in the browser.',
   }
 }
 
 const cursor = async (ask: AskReplace): Promise<Result> => {
   const file = join(home(), '.cursor', 'mcp.json')
   const kind = await putServer(file, ['mcpServers', NAME], { url: MCP_URL }, ask)
-  if (kind === 'kept') return { kind, message: `Kept the existing sepiace entry in ${file}` }
+  if (kind === 'kept') return { kind, message: `Kept the existing sepiace entry in ${tilde(file)}` }
   await installSkills(join(home(), '.cursor', 'skills'))
-  return { kind, message: changeMessage(kind, file), login: 'In Cursor, open Settings → MCP and sign in to sepiace.' }
+  return { kind, message: changeMessage(kind, file), login: 'Open Cursor, go to Settings → MCP, and sign in to sepiace.' }
 }
 
 const vscode = async (ask: AskReplace): Promise<Result> => {
@@ -113,17 +126,17 @@ const vscode = async (ask: AskReplace): Promise<Result> => {
   }
   const file = join(dir, 'mcp.json')
   const kind = await putServer(file, ['servers', NAME], entry, ask)
-  if (kind === 'kept') return { kind, message: `Kept the existing sepiace entry in ${file}` }
+  if (kind === 'kept') return { kind, message: `Kept the existing sepiace entry in ${tilde(file)}` }
   await installSkills(join(home(), '.copilot', 'skills'))
-  return { kind, message: changeMessage(kind, file), login: 'In VS Code, open the MCP view, start sepiace, and sign in in the browser.' }
+  return { kind, message: changeMessage(kind, file), login: 'Open VS Code, start sepiace from the MCP servers view, and sign in in the browser.' }
 }
 
 const openCode = async (ask: AskReplace): Promise<Result> => {
   const { dir, file } = openCodeConfig()
   const kind = await putServer(file, ['mcp', NAME], { type: 'remote', url: MCP_URL, enabled: true }, ask, { $schema: 'https://opencode.ai/config.json' })
-  if (kind === 'kept') return { kind, message: `Kept the existing sepiace entry in ${file}` }
+  if (kind === 'kept') return { kind, message: `Kept the existing sepiace entry in ${tilde(file)}` }
   await installSkills(join(dir, 'skills'))
-  return { kind, message: changeMessage(kind, file), login: `Run \`opencode mcp auth ${NAME}\` and sign in in the browser.` }
+  return { kind, message: changeMessage(kind, file), login: 'Sign in in the browser.' }
 }
 
 // Claude Desktop と claude.ai は、リモートの MCP をアプリのコネクタの画面でしか足せない。
@@ -133,13 +146,13 @@ const claudeDesktop = (): Result => ({
   snippet: MCP_URL,
 })
 
-export const CLIENTS: { value: ClientId; label: string; detect: () => boolean; hint?: string }[] = [
+export const CLIENTS: { value: ClientId; label: string; detect: () => Promise<boolean>; hint?: string }[] = [
   { value: 'claude-code', label: 'Claude Code', detect: () => has('claude') },
   { value: 'codex', label: 'Codex', detect: () => has('codex') },
-  { value: 'cursor', label: 'Cursor', detect: () => existsSync(join(home(), '.cursor')) || has('cursor') },
-  { value: 'vscode', label: 'VS Code', hint: 'GitHub Copilot', detect: () => existsSync(vscodeUserDir()) || has('code') },
-  { value: 'opencode', label: 'OpenCode', detect: () => existsSync(openCodeConfig().dir) || has('opencode') },
-  { value: 'claude-desktop', label: 'Claude Desktop and claude.ai', hint: 'shows the steps', detect: () => false },
+  { value: 'cursor', label: 'Cursor', detect: async () => existsSync(join(home(), '.cursor')) || (await has('cursor')) },
+  { value: 'vscode', label: 'VS Code', hint: 'GitHub Copilot', detect: async () => existsSync(vscodeUserDir()) || (await has('code')) },
+  { value: 'opencode', label: 'OpenCode', detect: async () => existsSync(openCodeConfig().dir) || (await has('opencode')) },
+  { value: 'claude-desktop', label: 'Claude Desktop and claude.ai', hint: 'shows the steps', detect: async () => false },
 ]
 
 export const install = async (client: ClientId, ask: AskReplace): Promise<Result> => {
@@ -157,4 +170,21 @@ export const install = async (client: ClientId, ask: AskReplace): Promise<Result
     case 'claude-desktop':
       return claudeDesktop()
   }
+}
+
+// ブラウザでログインを始める CLI があるクライアント。OpenCode は裏で動くサーバーが設定を読み直すまで sepiace を知らないので、
+// sepiace が一覧に出るまで待ってから始める。
+export const LOGIN: Partial<Record<ClientId, { command: string; args: string[]; ready?: () => Promise<boolean> }>> = {
+  codex: { command: 'codex', args: ['mcp', 'login', NAME] },
+  opencode: {
+    command: 'opencode',
+    args: ['mcp', 'auth', NAME],
+    ready: async () => {
+      for (let attempt = 0; attempt < 10; attempt++) {
+        if (new RegExp(`\\b${NAME}\\b`).test((await run('opencode', ['mcp', 'list'])).output)) return true
+        await new Promise((resolve) => setTimeout(resolve, 1500))
+      }
+      return false
+    },
+  },
 }

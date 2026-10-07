@@ -1,5 +1,5 @@
 ---
-name: sepiace
+name: memory
 description: Use sepiace, the user's long-term memory, through its MCP tool `memory`. Use it to recall the user's preferences, past decisions, and the state of ongoing work before acting on them, to remember durable facts the user tells you, and to forget what the user asks you to forget.
 ---
 
