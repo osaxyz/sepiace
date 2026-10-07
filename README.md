@@ -1,7 +1,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/osaxyz/sepiace/main/brand/logo-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/osaxyz/sepiace/main/brand/logo.svg">
-  <img src="brand/logo.svg" width="96" alt="sepiace">
+  <img src="brand/logo.svg" width="128" alt="sepiace">
 </picture>
 
 # sepiace
@@ -114,6 +114,7 @@ KiokuBench checks what a memory system actually stored: whether it kept the fact
 | `memory` skill | Tells the agent to recall before acting, to save durable facts as plain sentences about you, and never to send secrets |
 | Session-start note | A short reminder, about 130 tokens, added when a session starts, is cleared, or is compacted |
 | `migrate` skill | Moves local memories into sepiace. It runs only when you ask for it |
+| `update` skill | Updates the plugin and the skills in every client to the latest version. It runs only when you ask for it |
 
 </details>
 
@@ -251,6 +252,7 @@ KiokuBench は、記憶のシステムが実際に何を残したかを確かめ
 | `memory` スキル | 動く前に思い出すこと、長く使う事実をあなたについての文で覚えること、秘密を送らないことを伝えます |
 | セッションの始めの案内 | セッションの開始、`/clear`、圧縮のあとに、約130トークンの短い案内を足します |
 | `migrate` スキル | 手元の記憶を sepiace に移します。あなたが頼んだときだけ動きます |
+| `update` スキル | すべてのクライアントのプラグインとスキルを最新にします。あなたが頼んだときだけ動きます |
 
 </details>
 

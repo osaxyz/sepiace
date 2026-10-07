@@ -32,8 +32,10 @@ export const run = (command: string, args: string[]) =>
     const child = spawn(command, args, { shell: process.platform === 'win32' })
     child.stdout?.on('data', (chunk) => (output += chunk))
     child.stderr?.on('data', (chunk) => (output += chunk))
-    child.on('error', () => resolve({ ok: false, output: output.trim() }))
-    child.on('close', (code) => resolve({ ok: code === 0, output: output.trim() }))
+    // 色を付ける制御文字は、出力を読むときの邪魔になるので取り除く。
+    const plain = () => output.replace(/\u001b\[[0-9;?]*[A-Za-z]/g, '').trim()
+    child.on('error', () => resolve({ ok: false, output: plain() }))
+    child.on('close', (code) => resolve({ ok: code === 0, output: plain() }))
   })
 
 const has = async (command: string) => (await run(command, ['--version'])).ok
@@ -172,13 +174,21 @@ export const install = async (client: ClientId, ask: AskReplace): Promise<Result
   }
 }
 
-// ブラウザでログインを始める CLI があるクライアント。OpenCode は裏で動くサーバーが設定を読み直すまで sepiace を知らないので、
-// sepiace が一覧に出るまで待ってから始める。
-export const LOGIN: Partial<Record<ClientId, { command: string; args: string[]; ready?: () => Promise<boolean> }>> = {
-  codex: { command: 'codex', args: ['mcp', 'login', NAME] },
+// ブラウザでログインを始める CLI があるクライアント。signedIn でログイン済みかを確かめ、済んでいれば勧めない。
+// ログインし直すと、そのたびに新しい OAuth クライアントが登録され、コンソールのクライアントの一覧に同じ名前が増えるため。
+// OpenCode は裏で動くサーバーが設定を読み直すまで sepiace を知らないので、sepiace が一覧に出るまで待ってから始める。
+export const LOGIN: Partial<
+  Record<ClientId, { command: string; args: string[]; signedIn: () => Promise<boolean>; ready?: () => Promise<boolean> }>
+> = {
+  codex: {
+    command: 'codex',
+    args: ['mcp', 'login', NAME],
+    signedIn: async () => new RegExp(`^${NAME}\\s.*\\bOAuth\\b`, 'm').test((await run('codex', ['mcp', 'list'])).output),
+  },
   opencode: {
     command: 'opencode',
     args: ['mcp', 'auth', NAME],
+    signedIn: async () => new RegExp(`\\b${NAME}\\s+connected\\b`).test((await run('opencode', ['mcp', 'list'])).output),
     ready: async () => {
       for (let attempt = 0; attempt < 10; attempt++) {
         if (new RegExp(`\\b${NAME}\\b`).test((await run('opencode', ['mcp', 'list'])).output)) return true

@@ -1,7 +1,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/osaxyz/sepiace/main/brand/logo-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/osaxyz/sepiace/main/brand/logo.svg">
-  <img src="brand/logo.svg" width="96" alt="sepiace">
+  <img src="brand/logo.svg" width="128" alt="sepiace">
 </picture>
 
 # Contributing to sepiace

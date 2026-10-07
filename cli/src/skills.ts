@@ -7,6 +7,7 @@ import { writeAtomically } from './config.ts'
 // 非公開側では apps/plugins/sepiace に、公開側ではリポジトリのルートにプラグインがある。
 declare const __SKILL_MEMORY__: string | undefined
 declare const __SKILL_MIGRATE__: string | undefined
+declare const __SKILL_UPDATE__: string | undefined
 
 const fromPlugin = (name: string) => {
   const url = ['../../plugins/sepiace/', '../../']
@@ -21,10 +22,12 @@ const MEMORY = (typeof __SKILL_MEMORY__ === 'string' ? __SKILL_MEMORY__ : fromPl
   .replace(/^name: memory$/m, 'name: sepiace-memory')
   .replace('use the `migrate` skill', 'use the `sepiace-migrate` skill')
 const MIGRATE = (typeof __SKILL_MIGRATE__ === 'string' ? __SKILL_MIGRATE__ : fromPlugin('migrate')).replace(/^name: migrate$/m, 'name: sepiace-migrate')
+const UPDATE = (typeof __SKILL_UPDATE__ === 'string' ? __SKILL_UPDATE__ : fromPlugin('update')).replace(/^name: update$/m, 'name: sepiace-update')
 
 export const SKILLS = [
   { name: 'sepiace-memory', text: MEMORY },
   { name: 'sepiace-migrate', text: MIGRATE },
+  { name: 'sepiace-update', text: UPDATE },
 ] as const
 
 // 0.1.1 までは、使い方のスキルを sepiace という名前で置いていた。自分で置いたものと確かめられたときだけ片付ける。
@@ -41,7 +44,7 @@ const removeOldSkill = async (dir: string) => {
   return true
 }
 
-// dir の下に sepiace-memory と sepiace-migrate のスキルを置く。同じ中身ならそのままにし、変えたスキルの数を返す。
+// dir の下に sepiace-memory、sepiace-migrate、sepiace-update のスキルを置く。同じ中身ならそのままにし、変えたスキルの数を返す。
 export const installSkills = async (dir: string) => {
   let changed = 0
   for (const skill of SKILLS) {

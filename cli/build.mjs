@@ -15,6 +15,7 @@ await bundle(build, {
   define: {
     __SKILL_MEMORY__: skill('memory'),
     __SKILL_MIGRATE__: skill('migrate'),
+    __SKILL_UPDATE__: skill('update'),
     __VERSION__: JSON.stringify(version),
   },
 })

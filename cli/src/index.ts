@@ -86,7 +86,7 @@ const askReplace = (label: string, progress: ReturnType<typeof spinner>) => asyn
   return answer
 }
 
-type Connected = { client: ClientId; label: string; login: string }
+type Connected = { client: ClientId; label: string; login: string; isNew: boolean }
 
 // 1つずつつなぎ、処理中はスピナーを出し、終わったら結果を1行で出す。
 const connect = async (chosen: ClientId[]): Promise<Connected[]> => {
@@ -106,7 +106,7 @@ const connect = async (chosen: ClientId[]): Promise<Connected[]> => {
       } else {
         progress.stop(result.message)
         if ('warning' in result && result.warning) log.warn(result.warning)
-        connected.push({ client, label, login: result.login })
+        connected.push({ client, label, login: result.login, isNew: result.kind !== 'exists' })
       }
     } catch (error) {
       progress.error(`${label}: ${error instanceof Error ? error.message : String(error)}`)
@@ -126,9 +126,14 @@ const signIn = async (connected: Connected[]) => {
     note(connected.map((c) => `${c.label}: ${later(c)}`).join('\n'), 'Sign in later')
     return
   }
-  for (const { client, label, login } of connected) {
+  for (const { client, label, login, isNew } of connected) {
     const command = LOGIN[client]
     if (command) {
+      const checking = spinner()
+      checking.start(`Checking whether ${label} is signed in`)
+      const signedIn = await command.signedIn()
+      checking.stop(signedIn ? `${label} is already signed in to sepiace` : `${label} is not signed in to sepiace yet`)
+      if (signedIn) continue
       const now = stopIfCancelled(await confirm({ message: `Sign in to sepiace from ${label}? This opens your browser.`, active: 'Sign in', inactive: 'Skip' }))
       if (!now) continue
       if (command.ready) {
@@ -143,7 +148,8 @@ const signIn = async (connected: Connected[]) => {
         }
       }
       spawnSync(command.command, command.args, { stdio: 'inherit', shell: process.platform === 'win32' })
-    } else {
+    } else if (isNew) {
+      // ログイン済みかを確かめられないクライアントは、新しくつないだときだけ手順を出す。
       stopIfCancelled(await confirm({ message: `${label}: ${login}`, active: 'Done', inactive: 'Later' }))
     }
   }

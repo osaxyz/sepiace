@@ -1,7 +1,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/osaxyz/sepiace/main/brand/logo-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/osaxyz/sepiace/main/brand/logo.svg">
-  <img src="https://raw.githubusercontent.com/osaxyz/sepiace/main/brand/logo.svg" width="96" alt="sepiace">
+  <img src="https://raw.githubusercontent.com/osaxyz/sepiace/main/brand/logo.svg" width="128" alt="sepiace">
 </picture>
 
 # create-sepiace
@@ -40,7 +40,7 @@ It edits each client's config as JSON with comments, so your comments, key order
 <summary>The same guidance in every client</summary>
 <br>
 
-Claude Code and Codex get the sepiace plugin. Cursor, VS Code, and OpenCode have no plugins, so it places the same skills in each client's own skill folder, named `sepiace-memory` and `sepiace-migrate` so they do not clash with yours.
+Claude Code and Codex get the sepiace plugin. Cursor, VS Code, and OpenCode have no plugins, so it places the same skills in each client's own skill folder, named `sepiace-memory`, `sepiace-migrate`, and `sepiace-update` so they do not clash with yours.
 
 </details>
 
@@ -105,7 +105,7 @@ npm create sepiace
 <summary>どのクライアントにも同じ案内を置きます</summary>
 <br>
 
-Claude Code と Codex にはプラグインを入れます。Cursor、VS Code、OpenCode にはプラグインがないので、同じスキルを各クライアントのスキルの置き場所に置きます。名前は、手元のスキルとぶつからないよう `sepiace-memory` と `sepiace-migrate` にします。
+Claude Code と Codex にはプラグインを入れます。Cursor、VS Code、OpenCode にはプラグインがないので、同じスキルを各クライアントのスキルの置き場所に置きます。名前は、手元のスキルとぶつからないよう `sepiace-memory`、`sepiace-migrate`、`sepiace-update` にします。
 
 </details>
 

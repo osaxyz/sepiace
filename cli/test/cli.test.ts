@@ -80,16 +80,17 @@ describe('設定ファイルへの書き足し', () => {
 })
 
 describe('スキル', () => {
-  it('sepiace-memory と sepiace-migrate を置き、同じ中身なら書き直さない', async () => {
+  it('sepiace-memory、sepiace-migrate、sepiace-update を置き、同じ中身なら書き直さない', async () => {
     const dir = join(home, 'skills')
-    expect(await installSkills(dir)).toBe(2)
+    expect(await installSkills(dir)).toBe(3)
     expect(await installSkills(dir)).toBe(0)
     const migrate = readFileSync(join(dir, 'sepiace-migrate', 'SKILL.md'), 'utf8')
     expect(migrate).toMatch(/^name: sepiace-migrate$/m)
     const memory = readFileSync(join(dir, 'sepiace-memory', 'SKILL.md'), 'utf8')
     expect(memory).toMatch(/^name: sepiace-memory$/m)
     expect(memory).toContain('`sepiace-migrate` skill')
-    expect(SKILLS.map((s) => s.name)).toEqual(['sepiace-memory', 'sepiace-migrate'])
+    expect(readFileSync(join(dir, 'sepiace-update', 'SKILL.md'), 'utf8')).toMatch(/^name: sepiace-update$/m)
+    expect(SKILLS.map((s) => s.name)).toEqual(['sepiace-memory', 'sepiace-migrate', 'sepiace-update'])
   })
 
   it('前の版が置いた sepiace のスキルは片付けるが、ほかの人が置いたものには触らない', async () => {
