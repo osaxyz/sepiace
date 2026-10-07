@@ -25,10 +25,14 @@ Long-term memory for coding agents. Your agent passes one natural-language sente
 
 ### Quick start
 
-This repository is the sepiace plugin for Claude Code and Codex. It connects the sepiace MCP server and tells your agent when to recall and when to remember.
+```sh
+npx sepiace
+```
+
+It finds Claude Code, Codex, Cursor, VS Code, and OpenCode on your machine, connects the ones you choose, and shows how to sign in. This repository holds the sepiace plugin for Claude Code and Codex, and the `npx sepiace` CLI in [`cli/`](cli).
 
 <details>
-<summary>Claude Code</summary>
+<summary>Claude Code by hand</summary>
 <br>
 
 ```
@@ -41,7 +45,7 @@ Run `/mcp`, choose sepiace, and sign in with the code or link sent to your email
 </details>
 
 <details>
-<summary>Codex</summary>
+<summary>Codex by hand</summary>
 <br>
 
 ```sh
@@ -55,7 +59,7 @@ The login opens your browser. Sign in with the code or link sent to your email.
 </details>
 
 <details>
-<summary>Other MCP clients</summary>
+<summary>Other MCP clients by hand</summary>
 <br>
 
 Add `https://hi.sepiace.io/api/v1/mcp` as a remote MCP server (Streamable HTTP). Your client signs in through OAuth in the browser.
@@ -164,10 +168,14 @@ This repository is a mirror. See [CONTRIBUTING.md](CONTRIBUTING.md). To report a
 
 ### クイックスタート
 
-このリポジトリは、Claude Code と Codex で使う sepiace のプラグインです。sepiace の MCP サーバーをつなぎ、いつ思い出し、いつ覚えるかをエージェントに伝えます。
+```sh
+npx sepiace
+```
+
+手元の Claude Code、Codex、Cursor、VS Code、OpenCode を見つけ、選んだものにつなぎ、ログインの手順を案内します。このリポジトリには、Claude Code と Codex で使う sepiace のプラグインと、[`cli/`](cli) に `npx sepiace` の CLI があります。
 
 <details>
-<summary>Claude Code</summary>
+<summary>Claude Code に手で入れる</summary>
 <br>
 
 ```
@@ -180,7 +188,7 @@ This repository is a mirror. See [CONTRIBUTING.md](CONTRIBUTING.md). To report a
 </details>
 
 <details>
-<summary>Codex</summary>
+<summary>Codex に手で入れる</summary>
 <br>
 
 ```sh
@@ -194,7 +202,7 @@ codex mcp login sepiace
 </details>
 
 <details>
-<summary>ほかの MCP クライアント</summary>
+<summary>ほかの MCP クライアントに手で入れる</summary>
 <br>
 
 `https://hi.sepiace.io/api/v1/mcp` をリモートの MCP サーバー（Streamable HTTP）として足します。ログインはブラウザの OAuth で行います。

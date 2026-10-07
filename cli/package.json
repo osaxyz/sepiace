@@ -1,0 +1,50 @@
+{
+  "name": "sepiace",
+  "version": "0.1.0",
+  "description": "Connect sepiace, long-term memory for coding agents, to Claude Code, Codex, Cursor, VS Code, and OpenCode.",
+  "keywords": [
+    "sepiace",
+    "mcp",
+    "memory",
+    "long-term memory",
+    "claude-code",
+    "codex",
+    "cursor",
+    "opencode"
+  ],
+  "homepage": "https://www.sepiace.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/osaxyz/sepiace.git",
+    "directory": "cli"
+  },
+  "license": "Apache-2.0",
+  "author": "Arata Ouchi",
+  "type": "module",
+  "bin": {
+    "sepiace": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "dev": "tsx src/index.ts",
+    "prepublishOnly": "pnpm build"
+  },
+  "devDependencies": {
+    "@clack/prompts": "1.8.1",
+    "@types/node": "26.6.2",
+    "esbuild": "0.28.2",
+    "jsonc-parser": "3.3.1",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11"
+  }
+}
