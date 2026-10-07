@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "sepiace": {
+      "type": "http",
+      "url": "https://hi.sepiace.io/api/v1/mcp"
+    }
+  }
+}

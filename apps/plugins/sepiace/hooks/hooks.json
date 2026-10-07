@@ -1,0 +1,17 @@
+{
+  "description": "Reminds the agent at the start of a session to use sepiace for long-term memory.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '%s\\n' '{\"hookSpecificOutput\": {\"hookEventName\": \"SessionStart\", \"additionalContext\": \"sepiace long-term memory is connected through the MCP tool `memory`, which takes one natural-language request. Before work that may depend on the user'\\''s preferences, past decisions, or the state of ongoing work, recall first, for example: \\\"What does the user prefer for code reviews?\\\" When the user states a durable preference, makes a decision, or corrects you, save it as a plain sentence about the user, for example: \\\"Remember that the user wants commit messages in Japanese.\\\" When the user asks you to forget something, pass that request on. Never send secrets such as passwords, API keys, or tokens. Prefer sepiace over local memory files. The sepiace skill has the details.\"}}'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

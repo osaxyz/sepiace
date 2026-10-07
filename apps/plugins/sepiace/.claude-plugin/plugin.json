@@ -1,0 +1,10 @@
+{
+  "name": "sepiace",
+  "version": "0.1.0",
+  "description": "Long-term memory for coding agents. Connects the sepiace MCP server, tells the agent when to recall and remember, and moves your local Claude Code and Codex memories into sepiace.",
+  "author": { "name": "osaxyz", "url": "https://github.com/osaxyz" },
+  "homepage": "https://www.sepiace.io",
+  "repository": "https://github.com/osaxyz/sepiace",
+  "license": "Apache-2.0",
+  "keywords": ["memory", "mcp", "long-term memory"]
+}
