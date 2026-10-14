@@ -4,13 +4,13 @@
     "name": "osaxyz",
     "url": "https://github.com/osaxyz"
   },
-  "description": "Long-term memory for coding agents.",
+  "description": "Long-term memory for AI agents.",
   "plugins": [
     {
       "name": "sepiace",
       "source": "./",
       "description": "Connects the sepiace MCP server, tells the agent when to recall and remember, and moves local Claude Code and Codex memories into sepiace.",
-      "homepage": "https://www.sepiace.io",
+      "homepage": "https://sepiace.io",
       "license": "Apache-2.0"
     }
   ]

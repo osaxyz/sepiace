@@ -11,7 +11,7 @@ const VERSION = typeof __VERSION__ === 'string' ? __VERSION__ : 'dev'
 
 const HELP = `Usage: npm create sepiace [-- options]
 
-Connects sepiace, long-term memory for coding agents, to the clients on this machine.
+Connects sepiace, long-term memory for AI agents, to the clients on this machine.
 
 Options:
   --client <ids>   Comma-separated: ${CLIENTS.map((client) => client.value).join(', ')}

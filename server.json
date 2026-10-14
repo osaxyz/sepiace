@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.sepiace/sepiace",
+  "title": "sepiace",
+  "description": "Long-term memory for AI agents. Pass one sentence, and it remembers, recalls, or forgets.",
+  "websiteUrl": "https://sepiace.io",
+  "repository": {
+    "url": "https://github.com/osaxyz/sepiace",
+    "source": "github"
+  },
+  "version": "0.2.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://hi.sepiace.io/api/v1/mcp"
+    }
+  ]
+}

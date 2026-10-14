@@ -6,8 +6,8 @@
 
 # create-sepiace
 
-Connect [sepiace](https://www.sepiace.io), long-term memory for coding agents, to the clients on your machine.<br>
-<sub>コーディングエージェントのための長期記憶 sepiace を、手元のクライアントにつなぎます。</sub>
+Connect [sepiace](https://sepiace.io), long-term memory for AI agents, to the clients on your machine.<br>
+<sub>AI エージェントのための長期記憶 sepiace を、手元のクライアントにつなぎます。</sub>
 
 <p align="center"><a href="#en">Read more in English</a> · <a href="#ja">日本語で読む</a></p>
 

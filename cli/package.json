@@ -1,7 +1,7 @@
 {
   "name": "create-sepiace",
   "version": "0.1.4",
-  "description": "Connect sepiace, long-term memory for coding agents, to Claude Code, Codex, Cursor, VS Code, and OpenCode.",
+  "description": "Connect sepiace, long-term memory for AI agents, to Claude Code, Codex, Cursor, VS Code, and OpenCode.",
   "keywords": [
     "sepiace",
     "mcp",
@@ -10,9 +10,12 @@
     "claude-code",
     "codex",
     "cursor",
-    "opencode"
+    "vscode",
+    "opencode",
+    "mcp-server",
+    "agent-memory"
   ],
-  "homepage": "https://www.sepiace.io",
+  "homepage": "https://sepiace.io",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/osaxyz/sepiace.git",

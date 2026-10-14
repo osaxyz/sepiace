@@ -6,8 +6,8 @@
 
 # sepiace
 
-Long-term memory for coding agents. Your agent passes one natural-language sentence, and sepiace remembers, recalls, or forgets.<br>
-<sub>コーディングエージェントのための長期記憶です。エージェントが自然文を1つ渡すだけで、sepiace が覚える、思い出す、忘れるを行います。</sub>
+Long-term memory for AI agents. Your agent passes one natural-language sentence, and sepiace remembers, recalls, or forgets.<br>
+<sub>AI エージェントのための長期記憶です。エージェントが自然文を1つ渡すだけで、sepiace が覚える、思い出す、忘れるを行います。</sub>
 
 <p align="center"><a href="#en">Read more in English</a> · <a href="#ja">日本語で読む</a></p>
 
@@ -98,7 +98,17 @@ Memories are kept separately for each account, and every database query and vect
 <summary>Measured with KiokuBench</summary>
 <br>
 
-KiokuBench checks what a memory system actually stored: whether it kept the facts, replaced outdated ones, forgot what it was asked to forget, and stayed tidy. See the results on [www.sepiace.io](https://www.sepiace.io/kiokubench).
+KiokuBench checks what a memory system actually stored: whether it kept the facts, replaced outdated ones, forgot what it was asked to forget, and stayed tidy. The KiokuBench Index combines these four pillars into one number from 0 to 100.
+
+| System | Index | Remember | Replace | Forget | Tidy |
+| --- | --- | --- | --- | --- | --- |
+| sepiace | **96.1** | **98.7** | **98.0** | **100.0** | **88.2** |
+| Supermemory | 58.9 | 95.3 | 95.0 | 22.0 | 60.5 |
+| ByteRover | 39.2 | 72.3 | 19.0 | 62.0 | 27.7 |
+| Mem0 | 8.5 | 96.3 | 0.0 | 0.0 | 55.0 |
+| Store everything | 8.0 | 99.0 | 0.0 | 0.0 | 41.7 |
+
+KiokuBench v0.1, 10 personas in English and Japanese, raw conversation passed in as is. sepiace was measured on October 14, 2026, and the others between September 27 and 30, 2026. KiokuBench was designed and run by the team that builds sepiace. The method, the eight metrics, the conditions for each system, and the limitations are on [sepiace.io](https://sepiace.io/kiokubench).
 
 </details>
 
@@ -236,7 +246,17 @@ codex mcp login sepiace
 <summary>KiokuBench で測っています</summary>
 <br>
 
-KiokuBench は、記憶のシステムが実際に何を残したかを確かめます。事実を覚えているか、古くなった事実を置き換えたか、忘れてと頼まれたものを忘れたか、散らかっていないかを見ます。結果は [www.sepiace.io](https://www.sepiace.io/ja/kiokubench) で見られます。
+KiokuBench は、記憶のシステムが実際に何を残したかを確かめます。事実を覚えているか、古くなった事実を置き換えたか、忘れてと頼まれたものを忘れたか、散らかっていないかを見ます。KiokuBench Index は、この4つの柱を0から100の1つの値にまとめたものです。
+
+| システム | Index | 覚える | 置き換える | 忘れる | 整える |
+| --- | --- | --- | --- | --- | --- |
+| sepiace | **96.1** | **98.7** | **98.0** | **100.0** | **88.2** |
+| Supermemory | 58.9 | 95.3 | 95.0 | 22.0 | 60.5 |
+| ByteRover | 39.2 | 72.3 | 19.0 | 62.0 | 27.7 |
+| Mem0 | 8.5 | 96.3 | 0.0 | 0.0 | 55.0 |
+| 全部保存 | 8.0 | 99.0 | 0.0 | 0.0 | 41.7 |
+
+KiokuBench v0.1 で、英語と日本語の10人の会話をそのまま渡した結果です。sepiace は2026年10月14日に、ほかは2026年9月27日から30日に測りました。KiokuBench は、sepiace を作っているチームが設計し、測りました。測り方、8つの指標、システムごとの条件、限界は [sepiace.io](https://sepiace.io/ja/kiokubench) に載せています。
 
 </details>
 
