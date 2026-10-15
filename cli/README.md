@@ -6,18 +6,11 @@
 
 # create-sepiace
 
-Connect [sepiace](https://sepiace.io), long-term memory for AI agents, to the clients on your machine.<br>
-<sub>AI エージェントのための長期記憶 sepiace を、手元のクライアントにつなぎます。</sub>
-
-<p align="center"><a href="#en">Read more in English</a> · <a href="#ja">日本語で読む</a></p>
-
-<a id="en"></a>
-
-## English
+Connect [sepiace](https://sepiace.io), long-term memory for AI agents, to the clients on your machine.
 
 > **Tip:** Run it again at any time. Clients that are already connected are left as they are.
 
-### Quick start
+## Quick start
 
 ```sh
 npm create sepiace
@@ -25,7 +18,7 @@ npm create sepiace
 
 It finds Claude Code, Codex, Cursor, VS Code, and OpenCode on your machine, asks which ones should use sepiace, connects them, and walks you through signing in. Then it shows how to move the memories your agent already has into sepiace.
 
-### Technology
+## Technology
 
 <details>
 <summary>Your settings stay as they were</summary>
@@ -43,7 +36,7 @@ Claude Code and Codex get the sepiace plugin. Cursor, VS Code, and OpenCode have
 
 </details>
 
-### Specification
+## Specification
 
 <details>
 <summary>What it changes for each client</summary>
@@ -72,69 +65,5 @@ Pass options after `--`, for example `npm create sepiace -- --client cursor,open
 | `-y`, `--yes` | Does not ask. Connects the clients found on this machine, keeps existing entries, and skips signing in |
 | `-v`, `--version` | Shows the version |
 | `-h`, `--help` | Shows the help |
-
-</details>
-
-<a id="ja"></a>
-
-## 日本語
-
-> **ヒント** 何度流しても構いません。すでにつながっているクライアントはそのままにします。
-
-### クイックスタート
-
-```sh
-npm create sepiace
-```
-
-手元の Claude Code、Codex、Cursor、VS Code、OpenCode を見つけ、どれに sepiace をつなぐかを尋ねてからつなぎ、ログインまで案内します。最後に、エージェントがすでに覚えている記憶を sepiace に移す方法を伝えます。
-
-### テクノロジー
-
-<details>
-<summary>設定は元のまま残します</summary>
-<br>
-
-クライアントの設定ファイルをコメント付きの JSON として扱うので、コメント、キーの並び、ほかのサーバーは残ります。ファイルは一度に書き換えるので、途中で止まっても書きかけになりません。読めないファイルには触れません。sepiace という名前のサーバーが別の宛先ですでにあれば、置き換える前に尋ね、古い宛先に含まれる鍵は伏せて見せます。
-
-</details>
-
-<details>
-<summary>どのクライアントにも同じ案内を置きます</summary>
-<br>
-
-Claude Code と Codex にはプラグインを入れます。Cursor、VS Code、OpenCode にはプラグインがないので、同じスキルを各クライアントのスキルの置き場所に置きます。名前は、手元のスキルとぶつからないよう `sepiace-memory`、`sepiace-migrate`、`sepiace-update` にします。
-
-</details>
-
-### 仕様
-
-<details>
-<summary>クライアントごとに変えるもの</summary>
-<br>
-
-| クライアント | すること |
-| --- | --- |
-| Claude Code | [osaxyz/sepiace](https://github.com/osaxyz/sepiace) のプラグインを入れます |
-| Codex | [osaxyz/sepiace](https://github.com/osaxyz/sepiace) のプラグインを入れます |
-| Cursor | `~/.cursor/mcp.json` に sepiace を足し、`~/.cursor/skills` にスキルを置きます |
-| VS Code | ユーザーの `mcp.json` に sepiace を足し、`~/.copilot/skills` にスキルを置きます |
-| OpenCode | `~/.config/opencode/opencode.json` に sepiace を足し、`~/.config/opencode/skills` にスキルを置きます |
-| Claude Desktop と claude.ai | カスタムコネクタとして足す手順を表示します |
-
-</details>
-
-<details>
-<summary>オプション</summary>
-<br>
-
-オプションは `--` のあとに渡します。たとえば `npm create sepiace -- --client cursor,opencode` です。
-
-| オプション | すること |
-| --- | --- |
-| `--client <ids>` | カンマ区切りで `claude-code`、`codex`、`cursor`、`vscode`、`opencode`、`claude-desktop` から選びます |
-| `-y`、`--yes` | 何も尋ねません。この端末で見つかったクライアントをつなぎ、すでにある項目は残し、ログインは飛ばします |
-| `-v`、`--version` | 版を表示します |
-| `-h`、`--help` | ヘルプを表示します |
 
 </details>
