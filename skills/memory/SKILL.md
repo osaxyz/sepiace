@@ -19,15 +19,27 @@ Recall when the answer may depend on something the user told an agent before:
 
 Ask one focused question per request. If nothing comes back, carry on and do not mention it.
 
-## Remember durable facts
+## Remember what the user tells you
 
-Save a fact when the user states a preference, makes a decision, corrects you, or tells you about themselves or their ongoing work, and it will still matter in a later session.
+Save a fact as soon as the user tells you something about themselves that a later session could use. Do not wait for the user to ask you to remember it. This includes:
 
-Write each fact as a plain sentence about the user, in the user's language, and end with "remember" or "覚えて":
+- Who they are: their name, age, job, workplace, and where they live.
+- The people in their life, such as family, friends, and coworkers, and pets, as the user describes them.
+- Their health, allergies, routines, and habits.
+- Their preferences, the rules they want you to follow, and the decisions they make.
+- Their plans, schedules, and trips, and the state of their ongoing work.
+- Changes to any of these, such as a move, a new job, or a changed plan.
+
+When you are not sure whether a fact will matter later, save it. sepiace replaces outdated facts and lets unused memories fade, so saving a fact costs little, and a fact you did not save is lost.
+
+Write each fact as a plain sentence about the user, in the user's language:
 
 - "Remember that the user prefers pnpm over npm."
+- "Remember that the user's daughter Lena lives in Evanston."
 - "Remember that the user moved the sepiace repository to osaxyz/sepiace-internal on October 7, 2026."
-- "ユーザーはコードレビューを詳しく書いてほしい、と覚えて。"
+- "ユーザーはエビにアレルギーがある、と覚えて。"
+
+When a fact changes, save the new version and say what changed: "Remember that the user moved from Osaka to Fukuoka in March 2026."
 
 The server stores your sentences as they are and never rewrites them, so:
 
@@ -40,8 +52,7 @@ Do not save:
 
 - Secrets: passwords, API keys, tokens, recovery codes, private keys.
 - Things that are already in the code, the git history, or the project's docs.
-- Details that only matter for the current task.
-- Private information about other people that the user did not ask you to keep.
+- Details of the task at hand that will not matter once it is done, such as which file you are editing right now.
 
 ## Forget on request
 

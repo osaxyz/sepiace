@@ -1,6 +1,6 @@
 {
   "name": "sepiace",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Long-term memory for AI agents. Connects the sepiace MCP server, tells the agent when to recall and remember, and moves your local Claude Code and Codex memories into sepiace.",
   "author": {
     "name": "osaxyz",
