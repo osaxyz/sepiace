@@ -1,5 +1,5 @@
 {
-  "description": "Reminds the agent at the start of a session to use sepiace for long-term memory.",
+  "description": "Reminds the agent at the start of a session, and on each user message, to use sepiace for long-term memory.",
   "hooks": {
     "SessionStart": [
       {
@@ -8,6 +8,17 @@
           {
             "type": "command",
             "command": "printf '%s\\n' '{\"hookSpecificOutput\": {\"hookEventName\": \"SessionStart\", \"additionalContext\": \"sepiace long-term memory is connected through the MCP tool `memory`, which takes one natural-language request. Before work that may depend on the user'\\''s preferences, past decisions, or the state of ongoing work, recall first, for example: \\\"What does the user prefer for code reviews?\\\" As soon as the user tells you something about themselves that a later session could use, save it as a plain sentence about the user without waiting to be asked: who they are, their work, where they live, the people in their life, their health and habits, their preferences and decisions, their plans, and changes to any of these. When unsure, save it. For example: \\\"Remember that the user wants commit messages in Japanese.\\\" When the user asks you to forget something, pass that request on. Never send secrets such as passwords, API keys, or tokens. Prefer sepiace over local memory files. The memory skill of the sepiace plugin has the details.\"}}'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '%s\\n' '{\"hookSpecificOutput\": {\"hookEventName\": \"UserPromptSubmit\", \"additionalContext\": \"sepiace: if this message mentions anything about the user, even in passing (their people, places, health, habits, purchases, plans, preferences, or a change to any of these), save each such fact with the `memory` tool as a plain sentence about the user before you answer. If the message asks about the user or their past, recall from `memory` first. Never save secrets such as passwords, PINs, or codes.\"}}'",
             "timeout": 5
           }
         ]
