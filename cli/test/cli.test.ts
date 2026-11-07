@@ -3,12 +3,19 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { parse } from 'jsonc-parser'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { claudeAutoMemoryEnabled, claudeSettingsPath, disableClaudeAutoMemory } from '../src/automemory.ts'
 import { MCP_URL, install } from '../src/clients.ts'
 import { describeServer, putServer } from '../src/config.ts'
 import { SKILLS, installSkills } from '../src/skills.ts'
 
 let home: string
-const saved = { HOME: process.env.HOME, XDG_CONFIG_HOME: process.env.XDG_CONFIG_HOME, APPDATA: process.env.APPDATA }
+const saved = {
+  HOME: process.env.HOME,
+  XDG_CONFIG_HOME: process.env.XDG_CONFIG_HOME,
+  APPDATA: process.env.APPDATA,
+  CLAUDE_CONFIG_DIR: process.env.CLAUDE_CONFIG_DIR,
+  CLAUDE_CODE_DISABLE_AUTO_MEMORY: process.env.CLAUDE_CODE_DISABLE_AUTO_MEMORY,
+}
 
 beforeEach(() => {
   // 本物の設定に触れないよう、一時的なディレクトリをホームにする。
@@ -16,6 +23,8 @@ beforeEach(() => {
   process.env.HOME = home
   process.env.APPDATA = join(home, 'AppData', 'Roaming')
   delete process.env.XDG_CONFIG_HOME
+  delete process.env.CLAUDE_CONFIG_DIR
+  delete process.env.CLAUDE_CODE_DISABLE_AUTO_MEMORY
 })
 
 afterEach(() => {
@@ -144,5 +153,43 @@ describe('クライアント', () => {
 
   it('Claude Desktop は、コネクタの画面で足す手順を返す', async () => {
     expect(await install('claude-desktop', never)).toMatchObject({ kind: 'manual', snippet: MCP_URL })
+  })
+})
+
+describe('Claude Code の自動メモリ', () => {
+  it('設定がなければ有効とみなし、切ると autoMemoryEnabled だけを false にする', async () => {
+    expect(await claudeAutoMemoryEnabled()).toBe(true)
+    await disableClaudeAutoMemory()
+    expect(read(join(home, '.claude', 'settings.json'))).toEqual({ autoMemoryEnabled: false })
+    expect(await claudeAutoMemoryEnabled()).toBe(false)
+  })
+
+  it('ほかの設定とコメントを残す', async () => {
+    const file = join(home, '.claude', 'settings.json')
+    mkdirSync(join(home, '.claude'), { recursive: true })
+    writeFileSync(file, '{\n  // テーマ\n  "theme": "dark",\n  "autoMemoryEnabled": true\n}\n')
+    expect(await claudeAutoMemoryEnabled()).toBe(true)
+    await disableClaudeAutoMemory()
+    const text = readFileSync(file, 'utf8')
+    expect(text).toContain('// テーマ')
+    expect(read(file)).toEqual({ theme: 'dark', autoMemoryEnabled: false })
+  })
+
+  it('CLAUDE_CONFIG_DIR があればその下の設定を使い、環境変数で切ってあれば無効とみなす', async () => {
+    process.env.CLAUDE_CONFIG_DIR = join(home, 'claude-config')
+    expect(claudeSettingsPath()).toBe(join(home, 'claude-config', 'settings.json'))
+    await disableClaudeAutoMemory()
+    expect(existsSync(join(home, 'claude-config', 'settings.json'))).toBe(true)
+    delete process.env.CLAUDE_CONFIG_DIR
+    process.env.CLAUDE_CODE_DISABLE_AUTO_MEMORY = '1'
+    expect(await claudeAutoMemoryEnabled()).toBe(false)
+  })
+
+  it('読めない設定ファイルは書き換えずに止める', async () => {
+    const file = join(home, '.claude', 'settings.json')
+    mkdirSync(join(home, '.claude'), { recursive: true })
+    writeFileSync(file, '{ "theme": ')
+    await expect(disableClaudeAutoMemory()).rejects.toThrow()
+    expect(readFileSync(file, 'utf8')).toBe('{ "theme": ')
   })
 })

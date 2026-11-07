@@ -12,7 +12,7 @@ export type Change = 'added' | 'exists' | 'replaced' | 'kept'
 // 書き足す前に、同じ名前で別の中身のサーバーがあったときに、置き換えてよいかを尋ねる。
 export type AskReplace = (current: unknown) => Promise<boolean>
 
-const FORMAT = { formattingOptions: { insertSpaces: true, tabSize: 2, eol: '\n' } }
+export const FORMAT = { formattingOptions: { insertSpaces: true, tabSize: 2, eol: '\n' } }
 
 export const readConfig = async (path: string) => {
   const text = existsSync(path) ? await readFile(path, 'utf8') : ''

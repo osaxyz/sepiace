@@ -1,6 +1,6 @@
 {
   "name": "create-sepiace",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Connect sepiace, long-term memory for AI agents, to Claude Code, Codex, Cursor, VS Code, and OpenCode.",
   "keywords": [
     "sepiace",

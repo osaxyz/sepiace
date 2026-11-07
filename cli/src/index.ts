@@ -1,7 +1,8 @@
 import { spawnSync } from 'node:child_process'
 import { parseArgs } from 'node:util'
 import { cancel, confirm, intro, isCancel, log, multiselect, note, outro, spinner } from '@clack/prompts'
-import { CLIENTS, type ClientId, LOGIN, MCP_URL, install } from './clients.ts'
+import { claudeAutoMemoryEnabled, claudeSettingsPath, disableClaudeAutoMemory } from './automemory.ts'
+import { CLIENTS, type ClientId, LOGIN, MCP_URL, install, tilde } from './clients.ts'
 import { describeServer } from './config.ts'
 
 // npm create sepiace の本体。手元のエージェントのクライアントを見つけ、選んだものに sepiace をつなぎ、ログインと記憶の移行を案内する。
@@ -155,6 +156,37 @@ const signIn = async (connected: Connected[]) => {
   }
 }
 
+// Claude Code の自動メモリが有効なら、切ってよいかを尋ねる。有効なあいだは、エージェントが sepiace ではなく手元のファイルに記憶を書く。
+// 利用者の設定を書き換えるので、了承されたときだけ書く。--yes のときは書かずに、切り方を案内する。
+const offerAutoMemoryOff = async () => {
+  const where = tilde(claudeSettingsPath())
+  let enabled: boolean
+  try {
+    enabled = await claudeAutoMemoryEnabled()
+  } catch (error) {
+    log.warn(`Could not read ${where}: ${error instanceof Error ? error.message : String(error)}`)
+    return
+  }
+  if (!enabled) return
+  const how = `set "autoMemoryEnabled": false in ${where}, or run /memory in Claude Code`
+  if (values.yes) {
+    note(`Claude Code's built-in auto memory is on, so Claude Code may save to its own memory files instead of sepiace.\nTo turn it off, ${how}.`, 'Auto memory')
+    return
+  }
+  const off = stopIfCancelled(
+    await confirm({
+      message: "Turn off Claude Code's built-in auto memory? While it is on, Claude Code saves to its own memory files instead of sepiace. Your existing memory files are kept.",
+      initialValue: true,
+    }),
+  )
+  if (!off) {
+    log.info(`Kept auto memory on. To turn it off later, ${how}.`)
+    return
+  }
+  await disableClaudeAutoMemory()
+  log.success(`Turned off Claude Code's auto memory in ${where}`)
+}
+
 // 最後に、つないだクライアントに合わせて、手元の記憶を移す方法を出す。
 const MIGRATE_HINT: Record<ClientId, string> = {
   'claude-code': 'run /sepiace:migrate',
@@ -174,6 +206,7 @@ const main = async () => {
   }
   const connected = await connect(chosen)
   if (connected.length > 0) await signIn(connected)
+  if (connected.some((c) => c.client === 'claude-code')) await offerAutoMemoryOff()
   const migrate = connected.filter((c) => MIGRATE_HINT[c.client]).map((c) => `  ${c.label}: ${MIGRATE_HINT[c.client]}`)
   note(
     [

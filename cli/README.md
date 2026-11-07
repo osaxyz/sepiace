@@ -44,7 +44,7 @@ Claude Code and Codex get the sepiace plugin. Cursor, VS Code, and OpenCode have
 
 | Client | What it does |
 | --- | --- |
-| Claude Code | Installs the sepiace plugin from [osaxyz/sepiace](https://github.com/osaxyz/sepiace) |
+| Claude Code | Installs the sepiace plugin from [osaxyz/sepiace](https://github.com/osaxyz/sepiace). If Claude Code's built-in auto memory is on, asks whether to turn it off by setting `"autoMemoryEnabled": false` in `~/.claude/settings.json`, because while it is on Claude Code saves to its own memory files instead of sepiace. Your existing memory files are kept |
 | Codex | Installs the sepiace plugin from [osaxyz/sepiace](https://github.com/osaxyz/sepiace) |
 | Cursor | Adds sepiace to `~/.cursor/mcp.json` and the skills to `~/.cursor/skills` |
 | VS Code | Adds sepiace to the user `mcp.json` and the skills to `~/.copilot/skills` |
